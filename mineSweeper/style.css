@@ -16,8 +16,8 @@
     background-color: red;
 }
 td{
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
 }
 @media (max-width: 800px) {
     .container-input{
