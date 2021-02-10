@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="container-input">
+    <div class="container-input-item">
+        <label for="row">row : </label><input id="row" placeholder="low" type="number" minlength="1"/>
+    </div>
+    <div class="container-input-item">
+        <label for="col">col : </label><input id="col" placeholder="low" type="number" minlength="1"/>
+    </div>
+    <div class="container-input-item">
+        <label for="mine">mine : </label><input id="mine" placeholder="low" type="number" minlength="1"/>
+    </div>
+    <div>
+        <button id="play">
+            play
+        </button>
+    </div>
+    <table class="game-board" border="1">
+        <thead>
+            <tr>
+                <td class="game-board-timer">
+                    <span id="timer">0</span> s
+                </td>
+            </tr>
+        </thead>
+        <tbody class="game-board-body">
+
+        </tbody>
+
+    </table>
+    <script src="mineSweeper.js"></script>
+
+</div>
+
+</body>
+</html>
