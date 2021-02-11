@@ -6,8 +6,16 @@ let mine = document.querySelector("#mine");
 let table = document.querySelector(".game-board-body");
 let timer = document.querySelector(".game-board-timer");
 
+// 입력값 Number 로 변환
+
+let rowNum;
+let colNum;
+let mineNum;
+
 //table 태그에 게임판 그림
-function setBoard(rowNum, colNum) {
+function setBoard() {
+    let size = rowNum*colNum;
+    console.log(size);
     // 게임판 상태를 기록할 행렬 생성
     let boardMatrix = [];
     for (let i = 0; i < rowNum; i++) {
@@ -20,6 +28,14 @@ function setBoard(rowNum, colNum) {
         // td 태그 id 값 설정후 tr 테그에 저장
         for (let j = 0; j < colNum; j++) {
             let td = document.createElement("td");
+            td.addEventListener("contextmenu",function (event) {
+                event.preventDefault();
+                let menuRow = Array.prototype.indexOf.call(event.currentTarget.parentNode.parentNode.children,tr);
+                let menuCol = Array.prototype.indexOf.call(event.currentTarget.parentNode.children,td);
+                console.log(menuRow,menuCol);
+                console.log("오른쪽 버튼 클릭");
+                event.currentTarget.textContent="!";
+            })
             td.id = "board-col-" + Number(j + 1);
             tr.appendChild(td);
             boardVector.push(0);
@@ -37,11 +53,8 @@ function getRandomInt(min, max) {
 /**
  * 지뢰를 랜덤으로 배치해줌
  * @param boardMatrix 데이터를 따로 다룰 행렬 리스트
- * @param mineNum 지뢰 개수
- * @param rowNum 열 개수
- * @param colNum 행개수
  */
-function setRandomMine(boardMatrix, mineNum, rowNum, colNum) {
+function setRandomMine(boardMatrix) {
     let size = rowNum * colNum;
     // 빈 리스틀 만듬
     let randFill = Array(size)
@@ -70,12 +83,9 @@ function setRandomMine(boardMatrix, mineNum, rowNum, colNum) {
  *
  * @param boardMatrix 지뢰 행렬을 관리하기 위해 따로 리스트를 선언
  * html 에 table 태그를 접근하고 싶으면 table.children[인덱스].children[인덱스] 으로 접근해야됨
- * @param colNum 행번호
- * @param rowNum 열번호
- * @param mineNum 지뢰개수
  */
 // 지뢰 감지 함수
-function checkMine(boardMatrix,colNum,rowNum,mineNum){
+function checkMine(boardMatrix){
     // 현재 내위치를 기준으로 지뢰가 있을수 있는 방향 8가지 경우의수
     let direct = [[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1]];
     let mine = mineNum ;
@@ -98,7 +108,8 @@ function checkMine(boardMatrix,colNum,rowNum,mineNum){
                             // 즉 내 위치를 기준으로 주변에 지뢰가 없는지 확인
                             if(boardMatrix[i+x][j+y]!=="x"){
                                 // 지뢰가 없는데 해당 좌표가 빈값일때
-                                if (table.children[i+x].children[j+y].textContent===""){
+                                boardMatrix[i+x][j+y]+=1;
+                                /*if (table.children[i+x].children[j+y].textContent===""){
                                     // 초기값으로 1지정
                                     table.children[i+x].children[j+y].textContent="1";
                                 }
@@ -110,7 +121,7 @@ function checkMine(boardMatrix,colNum,rowNum,mineNum){
                                     currentMine+=1;
                                     table.children[i+x].children[j+y].textContent=String(currentMine);
 
-                                }
+                                }*/
                             }
                         }
                     }
@@ -128,6 +139,8 @@ function checkMine(boardMatrix,colNum,rowNum,mineNum){
                         if ((0<=x+i && x+i<rowNum) && (0<=y+j && y+j<colNum)){
                             // 내 주변에 지뢰가 있는지 확인
                             if(boardMatrix[i+x][j+y]==="x"){
+                                boardMatrix[i][j]+=1;
+/*
                                 // 내주변에 지뢰가 있는데 지뢰가 최초로 발견될경우 text 값을 1 로 지정
                                 if (table.children[i].children[j].textContent===""){
                                     // table.children[i]... html 에 table 태그를 직접 가져옴
@@ -142,6 +155,7 @@ function checkMine(boardMatrix,colNum,rowNum,mineNum){
 
 
                                 }
+*/
                             }
                         }
                     }
@@ -151,16 +165,35 @@ function checkMine(boardMatrix,colNum,rowNum,mineNum){
         }
     }
 }
+// UI 에 적용
+function notifyChanged(board){
+    for (let i = 0; i < rowNum; i++) {
+        for (let j = 0; j < colNum; j++) {
+            if (board[i][j]!==0){
+                table.children[i].children[j].textContent = board[i][j];
+            }
+
+        }
+
+    }
+
+}
 // play 버튼을 눌렀을때
 btn_play.addEventListener("click", function (event) {
-    let rowNum = parseInt(row.value);
-    let colNum = parseInt(col.value);
-    let mineNum = parseInt(mine.value);
+     rowNum = Number(row.value);
+     colNum = Number(col.value);
+     mineNum = Number(mine.value);
     timer.colSpan = rowNum;
-    let boardMatrix = setBoard(rowNum, colNum);
+    let boardMatrix = setBoard();
     console.log(boardMatrix);
-    setRandomMine(boardMatrix, mineNum, rowNum, colNum);
+    setRandomMine(boardMatrix);
     console.log(boardMatrix);
-    checkMine(boardMatrix,colNum,rowNum,mineNum);
+    checkMine(boardMatrix);
     console.log(boardMatrix)
+    notifyChanged(boardMatrix);
+});
+table.addEventListener("contextmenu", function (event) {
+    event.preventDefault();
+    console.log(event.target);
+    console.log(event.currentTarget);
 })
