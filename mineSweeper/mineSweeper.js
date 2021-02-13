@@ -5,16 +5,21 @@ let col = document.querySelector("#col");
 let mine = document.querySelector("#mine");
 let table = document.querySelector(".game-board-body");
 let timer = document.querySelector(".game-board-timer");
-
+let result = document.querySelector("#result");
 // 입력값 Number 로 변환
 
 let rowNum;
 let colNum;
 let mineNum;
 
+let checkMatrix;
+let boardMatrix;
+
+let gameState = true;
+
 //table 태그에 게임판 그림
 function setBoard() {
-    let size = rowNum*colNum;
+    let size = rowNum * colNum;
     console.log(size);
     // 게임판 상태를 기록할 행렬 생성
     let boardMatrix = [];
@@ -28,14 +33,49 @@ function setBoard() {
         // td 태그 id 값 설정후 tr 테그에 저장
         for (let j = 0; j < colNum; j++) {
             let td = document.createElement("td");
-            td.addEventListener("contextmenu",function (event) {
-                event.preventDefault();
-                let menuRow = Array.prototype.indexOf.call(event.currentTarget.parentNode.parentNode.children,tr);
-                let menuCol = Array.prototype.indexOf.call(event.currentTarget.parentNode.children,td);
-                console.log(menuRow,menuCol);
-                console.log("오른쪽 버튼 클릭");
-                event.currentTarget.textContent="!";
-            })
+            td.addEventListener("contextmenu", function (event) {
+                    event.preventDefault();
+                    if (gameState === false) {
+                        return;
+                    }
+                    let menuRow = Array.prototype.indexOf.call(event.currentTarget.parentNode.parentNode.children, tr);
+                    let menuCol = Array.prototype.indexOf.call(event.currentTarget.parentNode.children, td);
+                    if (event.currentTarget.textContent === "!") {
+                        event.currentTarget.textContent = "?";
+                    } else if (event.currentTarget.textContent === '?') {
+                        if (boardMatrix[menuRow][menuCol] === 0) {
+                            event.currentTarget.textContent = "";
+                        } else {
+
+                            event.currentTarget.textContent = String(boardMatrix[menuRow][menuCol]);
+                        }
+                    } else {
+
+                        event.currentTarget.textContent = "!";
+                    }
+
+
+                }
+            )
+            td.addEventListener("click", function (event) {
+                    if (gameState === false) {
+                        return;
+                    }
+                    let menuRow = Array.prototype.indexOf.call(event.currentTarget.parentNode.parentNode.children, tr);
+                    let menuCol = Array.prototype.indexOf.call(event.currentTarget.parentNode.children, td);
+                    if (event.target.textContent === 'x') {
+                        result.textContent = "실패ㅠㅠㅠㅠㅠㅠ"
+                        gameState = false
+                        event.target.textContent = '펑';
+                    } else {
+                        event.target.textContent = boardMatrix[menuRow][menuCol];
+                        console.log(checkMatrix);
+                        openBoard(boardMatrix, checkMatrix, menuRow, menuCol);
+                        updateOpenBoardUI(boardMatrix, checkMatrix);
+                    }
+
+                }
+            )
             td.id = "board-col-" + Number(j + 1);
             tr.appendChild(td);
             boardVector.push(0);
@@ -46,8 +86,51 @@ function setBoard() {
 }
 
 // 랜덤값 범위 지정 함수
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+// function getRandomInt(min, max) {
+//     return Math.floor(Math.random() * (max - min + 1)) + min;
+// }
+function openBoard(boardMatrix, checkMatrix, row, col) {
+    let direction = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]];
+    if (checkMatrix[row][col]) {
+        if (boardMatrix[row][col]==="x"){
+            checkMatrix[row][col]=false;
+            return;
+        }
+
+        return;
+
+    } else {
+
+        checkMatrix[row][col] = true;
+
+        for (let i = 0; i < direction.length; i++) {
+            let checkRow = row - direction[i][0];
+            let checkCol = col - direction[i][1];
+            if ((0 <= checkRow && checkRow < rowNum) && (0 <= checkCol && checkCol < colNum)) {
+                openBoard(boardMatrix, checkMatrix, checkRow, checkCol);
+            }
+
+        }
+
+
+    }
+}
+
+function updateOpenBoardUI(boarMatrix, checkMatrix) {
+    for (let i = 0; i < rowNum; i++) {
+        for (let j = 0; j < colNum; j++) {
+            if (checkMatrix[i][j]) {
+
+                table.children[i].children[j].classList.add("opened");
+                if (boarMatrix[i][j] !== 0) {
+                    table.children[i].children[j].textContent = boarMatrix[i][j];
+                }
+            }
+
+        }
+
+    }
+
 }
 
 /**
@@ -63,16 +146,15 @@ function setRandomMine(boardMatrix) {
             return idx + 1;
         });
     let shuffle = [];
-    while (randFill.length >size-mineNum) {
+    while (randFill.length > size - mineNum) {
         let popVal = randFill.splice(Math.floor(Math.random() * randFill.length), 1)[0];
         shuffle.push(popVal);
     }
     console.log(shuffle);
     for (let i = 0; i < shuffle.length; i++) {
 
-        let tRow = Math.floor(shuffle[i] / rowNum)%rowNum;
+        let tRow = Math.floor(shuffle[i] / rowNum) % rowNum;
         let tCol = shuffle[i] % rowNum;
-        console.log(tRow, tCol);
         boardMatrix[tRow][tCol] = 'x';
         table.children[tRow].children[tCol].textContent = 'x';
 
@@ -85,77 +167,53 @@ function setRandomMine(boardMatrix) {
  * html 에 table 태그를 접근하고 싶으면 table.children[인덱스].children[인덱스] 으로 접근해야됨
  */
 // 지뢰 감지 함수
-function checkMine(boardMatrix){
+function checkMine(boardMatrix) {
     // 현재 내위치를 기준으로 지뢰가 있을수 있는 방향 8가지 경우의수
-    let direct = [[0,1],[1,1],[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1]];
-    let mine = mineNum ;
-    let noMineNum = (colNum*rowNum)-mine;
+    let direct = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]];
+
+    let mine = mineNum;
+    let noMineNum = (colNum * rowNum) - mine;
     for (let i = 0; i < colNum; i++) {
         for (let j = 0; j < rowNum; j++) {
             // 지뢰개수보다 지뢰가 없는개수가 더 많을때
             // 지뢰가 있는 주변만 확인하여 계산을 줄임
-            if (noMineNum>mine){
+            if (noMineNum > mine) {
                 // 지뢰만 있는 위치를 찾고 그 주변 8부분을 탐색
-                if (boardMatrix[i][j]==="x"){
-                    for (let k = 0; k <8; k++) {
+                if (boardMatrix[i][j] === "x") {
+                    for (let k = 0; k < 8; k++) {
                         // direct 8방향 위,아래,좌우,대각선 값을 하나하나 꺼내서 확인함
                         // 즉 내위치 주변을 확인함
                         let x = direct[k][0];
                         let y = direct[k][1];
                         // 지뢰가 내 위치를 벗어날경우
-                        if ((0<=x+i && x+i<rowNum) && (0<=y+j && y+j<colNum)){
+                        if ((0 <= x + i && x + i < rowNum) && (0 <= y + j && y + j < colNum)) {
                             // 내 위치를 기준으로 8방향을 돌면서 지뢰가 없는경우
                             // 즉 내 위치를 기준으로 주변에 지뢰가 없는지 확인
-                            if(boardMatrix[i+x][j+y]!=="x"){
+                            if (boardMatrix[i + x][j + y] !== "x") {
                                 // 지뢰가 없는데 해당 좌표가 빈값일때
-                                boardMatrix[i+x][j+y]+=1;
-                                /*if (table.children[i+x].children[j+y].textContent===""){
-                                    // 초기값으로 1지정
-                                    table.children[i+x].children[j+y].textContent="1";
-                                }
-                                else{
-                                    // 지뢰가 겹쳤을때
-                                    // 선택한 위치에서 text 를 가져와 number 로 바꾼뒤 1을 더함
-                                    // 다시 string 으로 바꿔서 text 로 지정
-                                    let currentMine = parseInt(table.children[i+x].children[j+y].textContent);
-                                    currentMine+=1;
-                                    table.children[i+x].children[j+y].textContent=String(currentMine);
+                                boardMatrix[i + x][j + y] += 1;
 
-                                }*/
                             }
+                        }
+                        else{
+
                         }
                     }
                 }
             }
-            // 지뢰 개수가 더 많을때
+                // 지뢰 개수가 더 많을때
             // 지뢰가 없는 부분만 확인하여 계산을 줄임
-            else{
+            else {
                 // 지뢰가 비어있을때
-                if (boardMatrix[i][j]===0){
+                if (boardMatrix[i][j] === 0) {
                     for (let l = 0; l < 8; l++) {
                         let x = direct[l][0];
                         let y = direct[l][1];
                         // 지뢰가 내 위치를 벗어날경우
-                        if ((0<=x+i && x+i<rowNum) && (0<=y+j && y+j<colNum)){
+                        if ((0 <= x + i && x + i < rowNum) && (0 <= y + j && y + j < colNum)) {
                             // 내 주변에 지뢰가 있는지 확인
-                            if(boardMatrix[i+x][j+y]==="x"){
-                                boardMatrix[i][j]+=1;
-/*
-                                // 내주변에 지뢰가 있는데 지뢰가 최초로 발견될경우 text 값을 1 로 지정
-                                if (table.children[i].children[j].textContent===""){
-                                    // table.children[i]... html 에 table 태그를 직접 가져옴
-                                    table.children[i].children[j].textContent="1";
-                                }
-                                // 이미 지뢰가 발견된경우 현재 text 값을 가져와서 Number 로 만듬
-                                // Number 로만든후 1을더함 => 다시 String 으로 바꾼후 text 로 지정
-                                else{
-                                    let currentMine = parseInt(table.children[i].children[j].textContent);
-                                    currentMine+=1;
-                                    table.children[i].children[j].textContent=String(currentMine);
-
-
-                                }
-*/
+                            if (boardMatrix[i + x][j + y] === "x") {
+                                boardMatrix[i][j] += 1;
                             }
                         }
                     }
@@ -165,35 +223,54 @@ function checkMine(boardMatrix){
         }
     }
 }
-// UI 에 적용
-function notifyChanged(board){
+
+// // UI 에 적용
+// function notifyChanged(board) {
+//     for (let i = 0; i < rowNum; i++) {
+//         for (let j = 0; j < colNum; j++) {
+//             if (board[i][j] !== 0) {
+//                 table.children[i].children[j].textContent = board[i][j];
+//             }
+//
+//         }
+//
+//     }
+//
+// }
+function fillChecked(boardMatrix) {
+    console.log("Adfs",boardMatrix)
+    console.log("2,1",boardMatrix[2])
+    let matrix = [];
     for (let i = 0; i < rowNum; i++) {
+        let vector = [];
         for (let j = 0; j < colNum; j++) {
-            if (board[i][j]!==0){
-                table.children[i].children[j].textContent = board[i][j];
-            }
-
+            console.log(boardMatrix[i][j]);
+/*            if (boardMatrix[i][j]==='x' || boardMatrix[i][j]>0) {
+                vector.push(false);
+            } else {
+                vector.push(true);
+            }*/
         }
-
+        matrix.push(vector);
     }
-
+    return matrix;
 }
+
 // play 버튼을 눌렀을때
-btn_play.addEventListener("click", function (event) {
-     rowNum = Number(row.value);
-     colNum = Number(col.value);
-     mineNum = Number(mine.value);
+btn_play.addEventListener("click", function () {
+    table.innerHTML = "";
+    checkMatrix = [];
+    gameState = true;
+    rowNum = Number(row.value);
+    colNum = Number(col.value);
+    mineNum = Number(mine.value);
     timer.colSpan = rowNum;
-    let boardMatrix = setBoard();
-    console.log(boardMatrix);
+    boardMatrix = setBoard();
     setRandomMine(boardMatrix);
+    console.log();
+    checkMatrix = fillChecked(boardMatrix);
+    console.log(checkMatrix);
     console.log(boardMatrix);
     checkMine(boardMatrix);
     console.log(boardMatrix)
-    notifyChanged(boardMatrix);
 });
-table.addEventListener("contextmenu", function (event) {
-    event.preventDefault();
-    console.log(event.target);
-    console.log(event.currentTarget);
-})
