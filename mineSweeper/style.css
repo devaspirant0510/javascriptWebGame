@@ -18,6 +18,12 @@
 td{
     width: 20px;
     height: 20px;
+    text-align: center;
+    background-color: #555;
+}
+td.opened{
+    background-color: white;
+
 }
 @media (max-width: 800px) {
     .container-input{
