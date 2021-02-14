@@ -1,43 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <title>Document</title>
 </head>
 <body>
-<div class="container-input">
-    <div class="container-input-item">
-        <label for="row">row : </label><input id="row" placeholder="low" type="number" minlength="1"/>
+<div class="container">
+    <div id="game-row">
+        <label> row :
+            <input id="board-row" placeholder="row...." type="number">
+        </label>
+        <label> column :
+            <input id="board-col" placeholder="col...." type="number">
+        </label>
+        <label> mine :
+            <input id="board-mine" placeholder="mine...." type="number">
+        </label>
     </div>
-    <div class="container-input-item">
-        <label for="col">col : </label><input id="col" placeholder="low" type="number" minlength="1"/>
-    </div>
-    <div class="container-input-item">
-        <label for="mine">mine : </label><input id="mine" placeholder="low" type="number" minlength="1"/>
-    </div>
-
-    <table class="game-board" border="1">
-        <thead>
-            <tr>
-                <td class="game-board-timer">
-                    <span id="timer">0</span> s
-                </td>
-            </tr>
-        </thead>
-        <tbody class="game-board-body">
-
-        </tbody>
-
-    </table>
 
 </div>
 <div>
-    <button id="play">
+    <button id="board-play">
         play
     </button>
 </div>
-<div id  = "result"></div>
-<script src="mineSweeper.js"></script>
+
+<table id="board-table">
+    <thead>
+    0s
+    </thead>
+    <tbody id="board-table-body">
+
+    </tbody>
+</table>
+<script src="mineSweeper.js">
+</script>
+
 </body>
 </html>
