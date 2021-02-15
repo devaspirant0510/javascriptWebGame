@@ -91,23 +91,23 @@ function setBoard() {
 // }
 function openBoard(boardMatrix, checkMatrix, row, col) {
     let direction = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]];
-    if (checkMatrix[row][col]) {
-        if (boardMatrix[row][col]==="x"){
-            checkMatrix[row][col]=false;
+    if (checkMatrix[row][col] || boardMatrix[row][col] === 0) {
+        if (boardMatrix[row][col] !== 'x') {
+            checkMatrix[row][col] = true;
+            console.log("block end");
             return;
         }
-
         return;
-
     } else {
+        if (boardMatrix[row][col]!=="x"){
 
-        checkMatrix[row][col] = true;
-
+            checkMatrix[row][col] = true;
+        }
         for (let i = 0; i < direction.length; i++) {
-            let checkRow = row - direction[i][0];
-            let checkCol = col - direction[i][1];
+            let checkRow = row-direction[i][0];
+            let checkCol = col-direction[i][1];
             if ((0 <= checkRow && checkRow < rowNum) && (0 <= checkCol && checkCol < colNum)) {
-                openBoard(boardMatrix, checkMatrix, checkRow, checkCol);
+                openBoard(boardMatrix,checkMatrix,checkRow,checkCol);
             }
 
         }
@@ -115,6 +115,7 @@ function openBoard(boardMatrix, checkMatrix, row, col) {
 
     }
 }
+
 
 function updateOpenBoardUI(boarMatrix, checkMatrix) {
     for (let i = 0; i < rowNum; i++) {
@@ -139,6 +140,7 @@ function updateOpenBoardUI(boarMatrix, checkMatrix) {
  */
 function setRandomMine(boardMatrix) {
     let size = rowNum * colNum;
+    let direct = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]];
     // 빈 리스틀 만듬
     let randFill = Array(size)
         .fill(0)
@@ -156,6 +158,7 @@ function setRandomMine(boardMatrix) {
         let tRow = Math.floor(shuffle[i] / rowNum) % rowNum;
         let tCol = shuffle[i] % rowNum;
         boardMatrix[tRow][tCol] = 'x';
+
         table.children[tRow].children[tCol].textContent = 'x';
 
     }
@@ -237,22 +240,21 @@ function checkMine(boardMatrix) {
 //     }
 //
 // }
-function fillChecked(boardMatrix) {
-    console.log("Adfs",boardMatrix)
-    console.log("2,1",boardMatrix[2])
+function fillChecked() {
+    let direct = [[0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1], [-1, 0], [-1, 1]];
     let matrix = [];
     for (let i = 0; i < rowNum; i++) {
         let vector = [];
         for (let j = 0; j < colNum; j++) {
-            console.log(boardMatrix[i][j]);
-/*            if (boardMatrix[i][j]==='x' || boardMatrix[i][j]>0) {
+            if (boardMatrix[i][j]==='x' || Number(boardMatrix[i][j])>0) {
                 vector.push(false);
             } else {
                 vector.push(true);
-            }*/
+            }
         }
         matrix.push(vector);
     }
+
     return matrix;
 }
 
