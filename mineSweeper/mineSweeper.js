@@ -179,9 +179,9 @@ function openBoard(i, j) {
 
             openBoard(i - 1, j+1);
         }
-        if(canGo(i+1,j)){
+        if(canGo(i+1,j+1)){
 
-            openBoard(i + 1, j);
+            openBoard(i + 1, j+1);
         }
         if(canGo(i+1,j-1)){
 
