@@ -5,4 +5,8 @@ td{
     width: 20px;
     height: 20px;
     border: gray solid 1px;
+    background-color: #444444;
+}
+td.open{
+    background-color: white;
 }
