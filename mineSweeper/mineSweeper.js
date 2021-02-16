@@ -3,6 +3,7 @@ let divColTag = document.querySelector("#board-col");
 let divMineTag = document.querySelector("#board-mine");
 let btnPlayTag = document.querySelector("#board-play");
 let tableTag = document.querySelector("#board-table > #board-table-body");
+let result = document.querySelector("#result");
 
 let boardMatrix = [];
 let boardCheck = [];
@@ -11,6 +12,15 @@ let checkList = [];
 let nCol;
 let nRow;
 let nMine;
+let chekNum;
+
+let tag={
+    flag:'!',
+    question:'?',
+    mine:'x',
+    no_mine:0,
+    open:'o'
+}
 
 function drawTableTag() {
     for (let i = 0; i < nRow; i++) {
@@ -70,10 +80,7 @@ function checkMine(i, j, nRow, nCol) {
                 boardMatrix[i + direct[k][0]][j + direct[k][1]] += 1;
             }
         }
-
     }
-
-
 }
 
 function aroundMine(nRow, nCol, nMine) {
@@ -87,12 +94,9 @@ function aroundMine(nRow, nCol, nMine) {
                     checkMine(i, j, nRow, nCol);
                     cnt += 1;
                 }
-
             }
-
         }
     }
-
 }
 
 function setBoardCheck() {
@@ -103,20 +107,17 @@ function setBoardCheck() {
             if (boardMatrix[i][j] === 0) {
                 checkVec.push(false);
                 Vector.push(0);
-            } else if (boardMatrix[i][j] === 'x') {
+            } else if (boardMatrix[i][j] === tag.mine) {
                 checkVec.push(true);
                 Vector.push(1);
             } else {
                 checkVec.push(false);
                 Vector.push(2);
             }
-
         }
         checkList.push(checkVec);
         boardCheck.push(Vector);
-
     }
-
 }
 
 function updateUI() {
@@ -142,102 +143,87 @@ function getCountMine(r, c) {
                 cnt += 1;
             }
         }
-
     }
     return cnt;
-
 }
 
 function canGo(i, j) {
-    console.log(i,j);
     let flag = 0
     if (i >= 0 && i <nRow && j >= 0 && j < nCol) {
         flag = 1;
-
     }
-    console.log("flag",flag);
     return flag !== 0;
 }
 
 function openBoard(i, j) {
-    if (boardCheck[i][j] === 'o' || boardMatrix[i][j] === 'x') {
+    let currentTag = tableTag.children[i].children[j].textContent;
+    if (boardCheck[i][j] === tag.open || boardMatrix[i][j] === tag.mine || currentTag==='!' || currentTag==='?') {
         return;
     }
-    boardCheck[i][j] = 'o';
+    boardCheck[i][j] = tag.open;
+    chekNum+=1;
     if (getCountMine(i, j) === 0) {
-
         console.log(boardCheck);
         if (canGo(i - 1, j)) {
-
             openBoard(i - 1, j);
         }
         if(canGo(i-1,j-1)){
-
             openBoard(i - 1, j-1);
         }
         if(canGo(i-1,j+1)){
-
             openBoard(i - 1, j+1);
         }
         if(canGo(i+1,j+1)){
-
             openBoard(i + 1, j+1);
         }
         if(canGo(i+1,j-1)){
-
             openBoard(i + 1, j-1);
         }
         if(canGo(i+1,j)){
-
             openBoard(i + 1, j);
         }
         if(canGo(i,j+1)){
-
             openBoard(i, j+1);
         }
         if(canGo(i,j-1)){
-
             openBoard(i, j-1);
         }
-        /*
-                    openBoard(i-1,j+1);
-                    openBoard(i-1,j-1);
-
-                    openBoard(i+1,j);
-                    openBoard(i+1,j+1);
-                    openBoard(i+1,j-1);
-        */
-
-
-        // openBoard(i-1,j-1);
-        // openBoard(i+1,j);
-        // openBoard(i+1,j-1);
-        // openBoard(i+1,j+1);
-        // openBoard(i,j+1);
-        // openBoard(i,j-1);
-
     }
 }
 
 function setUIOpenTag() {
     for (let i = 0; i < nRow; i++) {
         for (let j = 0; j < nCol; j++) {
-            if (boardCheck[i][j] === 'o') {
-
+            if (boardCheck[i][j] === tag.open) {
                 tableTag.children[i].children[j].classList.add("open");
             }
-
         }
-
     }
 }
 
+function countOpenBlock(){
+    let count = 0;
+    for (let i = 0; i < nRow; i++) {
+        for (let j = 0; j < nCol; j++) {
+            console.log(boardCheck[i][j]);
+            if(boardCheck[i][j] ==="o"){
+                count+=1;
+            }
+        }
+    }
+    return count;
+}
 function setOnItemClickListener() {
     for (let i = 0; i < nRow; i++) {
         for (let j = 0; j < nCol; j++) {
             let currentItem = tableTag.children[i].children[j];
             currentItem
                 .addEventListener("click", () => {
+                    console.log(chekNum);
+                    if(boardMatrix[i][j]==="x"){
+                        result.textContent = "실패ㅠㅠ";
+                        return;
+                    }
                     if (currentItem.textContent === "?" || currentItem.textContent === "!") {
                         if (boardMatrix[i][j] === 0) {
                             currentItem.textContent = "";
@@ -247,6 +233,11 @@ function setOnItemClickListener() {
                     }
                     openBoard(i, j, nRow, nCol, currentItem, nMine);
                     setUIOpenTag();
+                    if(countOpenBlock()===nRow*nCol-nMine){
+                        result.textContent = "성공 bb";
+                        return true;
+
+                    }
 
                 })
             currentItem
@@ -273,6 +264,7 @@ function setOnItemClickListener() {
 
 btnPlayTag.addEventListener("click", function () {
     tableTag.innerHTML = "";
+    chekNum=0;
     nCol = Number(divColTag.value);
     nRow = Number(divRowTag.value);
     nMine = Number(divMineTag.value);
