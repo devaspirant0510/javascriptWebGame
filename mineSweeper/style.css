@@ -1,12 +1,26 @@
-table{
+table {
     border: black solid 1px;
 }
-td{
+
+td {
     width: 20px;
     height: 20px;
     border: gray solid 1px;
     background-color: #444444;
+    background-image: url("img/wall.png");
+    image-rendering: auto;
 }
-td.open{
+
+td.open {
     background-color: white;
+    background-image: url("img/mine1.png");
 }
+
+.number {
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 30px;
+    height: 30px;
+    background-position: 0 0;
+}
+
