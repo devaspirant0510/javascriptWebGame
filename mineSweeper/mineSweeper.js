@@ -14,12 +14,17 @@ let nRow;
 let nMine;
 let chekNum;
 
-let tag={
-    flag:'!',
-    question:'?',
-    mine:'x',
-    no_mine:0,
-    open:'o'
+let tag = {
+    flag: '!',
+    question: '?',
+    mine: 'x',
+    no_mine: 0,
+    open: 'o',
+    boardCheck_road: 0,
+    boardCheck_mine: 1,
+    boardCheck_number: 2,
+    boardCheck_flag: 3,
+    boardCheck_not: 4
 }
 
 function drawTableTag() {
@@ -106,13 +111,13 @@ function setBoardCheck() {
         for (let j = 0; j < nCol; j++) {
             if (boardMatrix[i][j] === 0) {
                 checkVec.push(false);
-                Vector.push(0);
+                Vector.push(tag.boardCheck_road);
             } else if (boardMatrix[i][j] === tag.mine) {
                 checkVec.push(true);
-                Vector.push(1);
+                Vector.push(tag.boardCheck_mine);
             } else {
                 checkVec.push(false);
-                Vector.push(2);
+                Vector.push(tag.boardCheck_number);
             }
         }
         checkList.push(checkVec);
@@ -124,7 +129,7 @@ function updateUI() {
     for (let i = 0; i < nRow; i++) {
         for (let j = 0; j < nCol; j++) {
             if (boardMatrix[i][j] !== 0) {
-                tableTag.children[i].children[j].textContent = boardMatrix[i][j];
+                tableTag.children[i].children[j].textContent = "";
             }
         }
     }
@@ -149,7 +154,7 @@ function getCountMine(r, c) {
 
 function canGo(i, j) {
     let flag = 0
-    if (i >= 0 && i <nRow && j >= 0 && j < nCol) {
+    if (i >= 0 && i < nRow && j >= 0 && j < nCol) {
         flag = 1;
     }
     return flag !== 0;
@@ -157,36 +162,35 @@ function canGo(i, j) {
 
 function openBoard(i, j) {
     let currentTag = tableTag.children[i].children[j].textContent;
-    if (boardCheck[i][j] === tag.open || boardMatrix[i][j] === tag.mine || currentTag==='!' || currentTag==='?') {
+    if (boardCheck[i][j] === tag.open || boardMatrix[i][j] === tag.mine || boardCheck[i][j] === tag.boardCheck_flag || boardCheck[i][j] === tag.boardCheck_not) {
         return;
     }
     boardCheck[i][j] = tag.open;
-    chekNum+=1;
+    chekNum += 1;
     if (getCountMine(i, j) === 0) {
-        console.log(boardCheck);
         if (canGo(i - 1, j)) {
             openBoard(i - 1, j);
         }
-        if(canGo(i-1,j-1)){
-            openBoard(i - 1, j-1);
+        if (canGo(i - 1, j - 1)) {
+            openBoard(i - 1, j - 1);
         }
-        if(canGo(i-1,j+1)){
-            openBoard(i - 1, j+1);
+        if (canGo(i - 1, j + 1)) {
+            openBoard(i - 1, j + 1);
         }
-        if(canGo(i+1,j+1)){
-            openBoard(i + 1, j+1);
+        if (canGo(i + 1, j + 1)) {
+            openBoard(i + 1, j + 1);
         }
-        if(canGo(i+1,j-1)){
-            openBoard(i + 1, j-1);
+        if (canGo(i + 1, j - 1)) {
+            openBoard(i + 1, j - 1);
         }
-        if(canGo(i+1,j)){
+        if (canGo(i + 1, j)) {
             openBoard(i + 1, j);
         }
-        if(canGo(i,j+1)){
-            openBoard(i, j+1);
+        if (canGo(i, j + 1)) {
+            openBoard(i, j + 1);
         }
-        if(canGo(i,j-1)){
-            openBoard(i, j-1);
+        if (canGo(i, j - 1)) {
+            openBoard(i, j - 1);
         }
     }
 }
@@ -195,67 +199,127 @@ function setUIOpenTag() {
     for (let i = 0; i < nRow; i++) {
         for (let j = 0; j < nCol; j++) {
             if (boardCheck[i][j] === tag.open) {
-                tableTag.children[i].children[j].classList.add("open");
+                switch (boardMatrix[i][j]) {
+                    case 0:
+                        tableTag.children[i].children[j].classList.add("open");
+                        break;
+                    case 1:
+                        tableTag.children[i].children[j].classList.add("num1");
+                        break;
+                    case 2:
+                        tableTag.children[i].children[j].classList.add("num2");
+                        break;
+                    case 3:
+                        tableTag.children[i].children[j].classList.add("num3");
+                        break;
+                    case 4:
+                        tableTag.children[i].children[j].classList.add("num4");
+                        break;
+                    case 5:
+                        tableTag.children[i].children[j].classList.add("num5");
+                        break;
+                    case 6:
+                        tableTag.children[i].children[j].classList.add("num6");
+                        break;
+                    case 7:
+                        tableTag.children[i].children[j].classList.add("num7");
+                        break;
+                    case 8:
+                        tableTag.children[i].children[j].classList.add("num8");
+                        break;
+                    case 9:
+                        tableTag.children[i].children[j].classList.add("num9");
+                        break;
+
+
+                }
             }
         }
     }
 }
 
-function countOpenBlock(){
+function countOpenBlock() {
     let count = 0;
     for (let i = 0; i < nRow; i++) {
         for (let j = 0; j < nCol; j++) {
-            console.log(boardCheck[i][j]);
-            if(boardCheck[i][j] ==="o"){
-                count+=1;
+            if (boardCheck[i][j] === "o") {
+                count += 1;
             }
         }
     }
     return count;
 }
+
 function setOnItemClickListener() {
     for (let i = 0; i < nRow; i++) {
         for (let j = 0; j < nCol; j++) {
             let currentItem = tableTag.children[i].children[j];
             currentItem
-                .addEventListener("click", () => {
-                    console.log(chekNum);
-                    if(boardMatrix[i][j]==="x"){
+                .addEventListener("click", (event) => {
+                    console.log(boardCheck);
+                    if (boardMatrix[i][j] === "x") {
                         result.textContent = "실패ㅠㅠ";
                         return;
                     }
-                    if (currentItem.textContent === "?" || currentItem.textContent === "!") {
-                        if (boardMatrix[i][j] === 0) {
-                            currentItem.textContent = "";
-                        } else {
-                            currentItem.textContent = boardMatrix[i][j];
-                        }
-                    }
+
                     openBoard(i, j, nRow, nCol, currentItem, nMine);
                     setUIOpenTag();
-                    if(countOpenBlock()===nRow*nCol-nMine){
+                    if (countOpenBlock() === nRow * nCol - nMine) {
                         result.textContent = "성공 bb";
                         return true;
-
                     }
 
                 })
-            currentItem
+            /*currentItem
                 .addEventListener("contextmenu", (event) => {
                     event.preventDefault();
-                    if (currentItem.textContent === "!") {
+                    if (boardCheck[i][j] === tag.boardCheck_flag) {
+                        currentItem.classList.remove("mine");
+                        currentItem.classList.add("question");
                         currentItem.textContent = "?";
-                    } else if (currentItem.textContent === "?") {
-                        if (boardMatrix[i][j] === 0) {
-                            currentItem.textContent = "";
-                        } else {
-                            currentItem.textContent = boardMatrix[i][j];
+                        boardCheck[i][j] = tag.boardCheck_not;
+                    } else if (boardCheck[i][j] === tag.boardCheck_not) {
+                        currentItem.classList.remove("question");
+                        switch (boardMatrix[i][j]) {
+                            case 0:
+                                tableTag.children[i].children[j].classList.add("open");
+                                break;
+                            case 1:
+                                tableTag.children[i].children[j].classList.add("num1");
+                                break;
+                            case 2:
+                                tableTag.children[i].children[j].classList.add("num2");
+                                break;
+                            case 3:
+                                tableTag.children[i].children[j].classList.add("num3");
+                                break;
+                            case 4:
+                                tableTag.children[i].children[j].classList.add("num4");
+                                break;
+                            case 5:
+                                tableTag.children[i].children[j].classList.add("num5");
+                                break;
+                            case 6:
+                                tableTag.children[i].children[j].classList.add("num6");
+                                break;
+                            case 7:
+                                tableTag.children[i].children[j].classList.add("num7");
+                                break;
+                            case 8:
+                                tableTag.children[i].children[j].classList.add("num8");
+                                break;
+                            case 9:
+                                tableTag.children[i].children[j].classList.add("num9");
+                                break;
+
+
                         }
                     } else {
-                        currentItem.textContent = "!";
+                        currentItem.classList.add("mine");
+                        boardCheck[i][j] = tag.boardCheck_flag;
                     }
 
-                })
+                })*/
 
         }
 
@@ -264,19 +328,23 @@ function setOnItemClickListener() {
 
 btnPlayTag.addEventListener("click", function () {
     tableTag.innerHTML = "";
-    chekNum=0;
+    result.textContent = "";
+
+    chekNum = 0;
     nCol = Number(divColTag.value);
     nRow = Number(divRowTag.value);
     nMine = Number(divMineTag.value);
-    boardMatrix = [];
-    boardCheck = [];
-    checkList = [];
-    drawTableTag();
-    setBoardMatrix();
-    setBoardCheck();
-    updateUI();
-    setOnItemClickListener();
-
-
-})
+    if (nMine === 1 || (nCol === 1 && nRow === 1)) {
+        alert("아니 이건 개쉽잖아");
+    } else {
+        boardMatrix = [];
+        boardCheck = [];
+        checkList = [];
+        drawTableTag();
+        setBoardMatrix();
+        setBoardCheck();
+        updateUI();
+        setOnItemClickListener();
+    }
+});
 
