@@ -3,24 +3,103 @@ table {
 }
 
 td {
-    width: 20px;
-    height: 20px;
-    border: gray solid 1px;
-    background-color: #444444;
-    background-image: url("img/wall.png");
+    background-image: url("img/wall.PNG");
+    width: 21px;
+    height: 21px;
     image-rendering: auto;
 }
 
 td.open {
     background-color: white;
-    background-image: url("img/mine1.png");
+    background-image: url("img/load.png");
 }
-
-.number {
+td.num1{
     background-image: url("img/number.PNG");
     background-size: 200px;
-    width: 30px;
-    height: 30px;
-    background-position: 0 0;
+    width: 21px;
+    height: 21px;
+    background-position: 4px 0;
+}
+td.num2{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -16px 0;
+}
+td.num3{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -36px 0;
+}
+td.num4{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -56px 0;
+}
+td.num5{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -76px 0;
+}
+td.num6{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -96px 0;
+}
+td.num7{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -116px 0;
+}
+td.num8{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -136px 0;
+}
+td.num9{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -156px 0;
+}
+td.num0{
+    background-image: url("img/number.PNG");
+    background-size: 200px;
+    width: 21px;
+    height: 21px;
+    background-position: -176px 0;
+}
+td.mine{
+    background-image: url("img/flag.PNG");
+    width: 21px;
+    height: 21px;
+    image-rendering: auto;
+}
+td.question{
+    background-image: url("img/question.PNG");
+    width: 21px;
+    height: 21px;
+    image-rendering: auto;
+
+}
+.number {
+    background-image: url("img/question.PNG");
+    width: 21px;
+    height: 21px;
+    image-rendering: auto;
 }
 
