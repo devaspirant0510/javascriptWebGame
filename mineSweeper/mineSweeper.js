@@ -13,6 +13,8 @@ let nCol;
 let nRow;
 let nMine;
 let chekNum;
+let gameCount = 0;
+let noMine;
 
 let tag = {
     flag: '!',
@@ -65,7 +67,7 @@ function setRandMine(nRow, nCol, nMine) {
         randVector.push(popVal);
     }
     let mineVector = randVector.slice(0, nMine + 1);
-    let tempMine = mineVector.pop();
+    noMine = mineVector.pop();
     for (let val of mineVector) {
         val -= 1;
         let x = Math.floor(val / nRow) % nRow;
@@ -258,8 +260,21 @@ function setOnItemClickListener() {
                 .addEventListener("click", (event) => {
                     console.log(boardCheck);
                     if (boardMatrix[i][j] === "x") {
-                        result.textContent = "실패ㅠㅠ";
-                        return;
+                        if(gameCount===0){
+                            let x = Math.floor(noMine / nRow) % nRow;
+                            let y = noMine % nRow;
+                            console.log(x,y);
+                            boardMatrix[x][y] ="x";
+                            let count = getCountMine(i,j);
+                            boardMatrix[i][j] = count;
+                            boardCheck = count===0?tag.boardCheck_road:tag.boardCheck_number;
+                            console.log(boardMatrix)
+
+                        }
+                        else{
+                            result.textContent = "실패ㅠㅠ";
+                            return;
+                        }
                     }
 
                     openBoard(i, j, nRow, nCol, currentItem, nMine);
@@ -270,16 +285,17 @@ function setOnItemClickListener() {
                     }
 
                 })
-            /*currentItem
+            currentItem
                 .addEventListener("contextmenu", (event) => {
                     event.preventDefault();
                     if (boardCheck[i][j] === tag.boardCheck_flag) {
                         currentItem.classList.remove("mine");
                         currentItem.classList.add("question");
-                        currentItem.textContent = "?";
                         boardCheck[i][j] = tag.boardCheck_not;
                     } else if (boardCheck[i][j] === tag.boardCheck_not) {
                         currentItem.classList.remove("question");
+                        boardCheck[i][j] = tag.boardCheck_road
+
                         switch (boardMatrix[i][j]) {
                             case 0:
                                 tableTag.children[i].children[j].classList.add("open");
@@ -319,7 +335,7 @@ function setOnItemClickListener() {
                         boardCheck[i][j] = tag.boardCheck_flag;
                     }
 
-                })*/
+                })
 
         }
 
@@ -331,6 +347,7 @@ btnPlayTag.addEventListener("click", function () {
     result.textContent = "";
 
     chekNum = 0;
+    gameCount = 0;
     nCol = Number(divColTag.value);
     nRow = Number(divRowTag.value);
     nMine = Number(divMineTag.value);
@@ -344,6 +361,7 @@ btnPlayTag.addEventListener("click", function () {
         setBoardMatrix();
         setBoardCheck();
         updateUI();
+        console.log(boardMatrix);
         setOnItemClickListener();
     }
 });
