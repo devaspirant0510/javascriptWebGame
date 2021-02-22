@@ -1,0 +1,17 @@
+#main-screen{
+    width: 700px;
+    height: 500px;
+    font-size: 25px;
+    user-select: none;
+    background-color: dodgerblue;
+
+}
+#main-screen.init{
+    background-color: dodgerblue;
+}
+#main-screen.wait{
+    background-color: red;
+}
+#main-screen.stop{
+    background-color: lawngreen;
+}
