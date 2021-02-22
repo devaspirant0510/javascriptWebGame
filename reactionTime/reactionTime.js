@@ -13,8 +13,17 @@ mainScreen.addEventListener("click", () => {
     // 초록색 화면 클릭해야되는 부분
     if (mainScreen.className === "wait") {
         console.log("stop");
-        mainScreen.textContent = "클릭하세요";
-        changeScreen("wait", "stop");
+        if(!startTime){
+            clearTimeout(timeout);
+            mainScreen.textContent = "어이.. 천천히 하라구..."
+            changeScreen("wait","stop");
+        }
+        else{
+
+            mainScreen.textContent = "클릭하세요";
+            changeScreen("wait", "stop");
+        }
+
 
 
     }
@@ -22,8 +31,12 @@ mainScreen.addEventListener("click", () => {
     else if (mainScreen.className === "stop") {
         console.log("init");
         endTime = new Date();
+        let record = endTime - startTime;
         console.log(endTime-startTime);
-        mainScreen.textContent = "클릭하여 시작하세요"
+        // null 처리를 꼭 해야 잘못클릿했을때 !startTime 루프에 돌아서 판단함
+        startTime = null;
+        endTime = null;
+        mainScreen.textContent = `당신의 기록은 ???\n${record}s \n 클릭하여 시작하세요`;
         changeScreen("stop", "init");
 
 
@@ -35,8 +48,8 @@ mainScreen.addEventListener("click", () => {
         changeScreen("init", "wait");
         let randTime = Math.random()*4500+1500;
         timeout = setTimeout(()=>{
-            mainScreen.click();
             startTime = new Date();
+            mainScreen.click();
         },randTime);
 
 
