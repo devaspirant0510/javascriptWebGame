@@ -1,0 +1,12 @@
+td{
+    width: 150px;
+    height: 150px;
+    font-size: 100px;
+    text-align: center;
+}
+td.type-o{
+    color: green;
+}
+td.type-x{
+    color: red;
+}
