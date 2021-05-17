@@ -10,3 +10,24 @@ td.type-o{
 td.type-x{
     color: red;
 }
+body{
+    background-color: lightpink;
+    text-align: center;
+}
+table{
+    border-radius: 30px;
+    border: white 2px dashed;
+    text-align: center;
+    margin: 30px auto 0;
+}
+
+#play-btn{
+    padding: 20px 60px;
+    border: 3px solid yellow;
+    background-color: red;
+    border-radius: 30px;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+    margin: 0 auto;
+}
