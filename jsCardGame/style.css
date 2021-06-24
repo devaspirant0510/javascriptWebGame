@@ -1,0 +1,51 @@
+#rival-cards,#rival-deck,#rival-hero,#my-cards,#my-deck,#my-hero{
+    text-align: center;
+}
+.card{
+    width: 50px;
+    height: 75px;
+    background-color: skyblue;
+    display: inline-block;
+    position: relative;
+    border: 1px solid black;
+    margin-bottom: 10px;
+}
+.card-hp,.card-atk,.card-cost{
+    text-align: center;
+    font-size: 12px;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    position: absolute;
+    border-radius: 20px;
+    bottom: 0;
+    border: 1px solid black;
+}
+#my-cost-tag,#rival-cost-tag{
+    text-align: center;
+}
+#rival-deck .card{
+    background-image: url('http://www.hearthstonetopdecks.com/wp-content/uploads/2014/06/card-back-samsung.png');
+    background-size: 50px 75px;
+}
+.card-cost{
+    top: 0;
+    left: 0;
+    background-color: blue;
+    color: white;
+}
+.card-atk{
+    left: 0;
+    background-color: yellow;
+}
+.card-hp{
+    right: 0;
+    background-color: red;
+    color: white;
+}
+.card-name{
+    font-size: 12px;
+}
+.card-hidden{
+    display: none;
+}
