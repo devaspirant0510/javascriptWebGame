@@ -1,4 +1,4 @@
-#rival-cards,#rival-deck,#rival-hero,#my-cards,#my-deck,#my-hero{
+#rival-deck,#rival-hero,#my-cards,#my-deck,#my-hero{
     text-align: center;
 }
 .card{
@@ -8,7 +8,7 @@
     display: inline-block;
     position: relative;
     border: 1px solid black;
-    margin-bottom: 10px;
+    margin: 8px;
 }
 .card-hp,.card-atk,.card-cost{
     text-align: center;
@@ -27,6 +27,13 @@
 #rival-deck .card{
     background-image: url('http://www.hearthstonetopdecks.com/wp-content/uploads/2014/06/card-back-samsung.png');
     background-size: 50px 75px;
+}
+#my-deck{
+    display: flex;
+    justify-content: flex-end;
+    align-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
 }
 .card-cost{
     top: 0;
@@ -48,4 +55,9 @@
 }
 .card-hidden{
     display: none;
+}
+#turn-button{
+    position: relative;
+    float: right;
+    top: -20px;
 }
