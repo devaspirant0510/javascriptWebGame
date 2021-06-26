@@ -71,50 +71,52 @@ function uiUpdate(tag, card, rival) {
  */
 const eventList = [];
 function addMyCard(len) {
+    // 데이터관련
     for (let i = 0; i < len; i++) {
-        const newCard = createCard(false);
+        const newCard = createCard(false,false);
         myCardList.push(newCard);
     }
+    // UI 에 보여줌
+    uiCleanUpdate(my_deck,len);
+}
+function uiCleanUpdate(tag,len){
+    tag.innerHTML = "";
     for (let i = 0; i < len; i++) {
-        // UI 에 업데이트 시키고 업데이트 시킨 정보 리턴받음
-        const cardEvent = uiUpdate(my_deck, myCardList[i], false);
-        eventList.push(cardEvent);
-        // 리턴받은 카드에 이벤트 처리
-        // 내턴일때만 이벤트 처리
-
+        const cardEvent = uiUpdate(tag,myCardList[i],false);
+        cardEvent.addEventListener("click",()=>{
+            appendField(myCardList[i],cardEvent);
+            myCardList.splice(i,1);
+            uiCleanUpdate(my_deck,myCardList.length)
+        })
     }
-    updateEvent(eventList);
 }
 
-function updateEvent(list) {
-    for (let i = 0; i < list.length; i++) {
-        list[i].addEventListener('click', () => {
-            if (turn) {
-                let currentCost = Number(my_cost.textContent);
-                currentCost -= list[i].querySelector(".card-cost").textContent;
-                if (currentCost < 0) {
-                    alert("코스트가 부족합니다.")
-                } else {
-                    my_cost.textContent = currentCost.toString();
-                    myFieldList.push(list[i]);
-                    uiUpdate(my_cards, myCardList[i]);
-                    myCardList.splice(i, 1);
-                    my_deck.innerHTML = "";
-                    const eventList = [];
-                    for (let j = 0; j < myCardList.length; j++) {
-
-                        const getEvent = uiUpdate(my_deck, myCardList[j], false);
-                        eventList.push(getEvent);
-
-
-                    }
-                    updateEvent(eventList);
-                }
-            }
+/**
+ * 카드패에서 필드로 올리기
+ * @param card 카드 정보
+ * @param cardEvent 카드 이벤트(uiUpdate 함수로 받아온 값)
+ */
+function appendField(card,cardEvent){
+    // 화면 다 지우고 다시 그리기
+    my_cards.innerHTML = ""
+    // 데이터 관련
+    myFieldList.push(card)
+    // ui 에 적용
+    for (let i = 0; i < myFieldList.length; i++) {
+        const fieldEvent = uiUpdate(my_cards,myFieldList[i],false);
+        fieldEvent.addEventListener("click",()=>{
+            cardAttack();
 
         })
 
     }
+
+}
+function cardAttack(){
+    console.log("attack")
+}
+
+function updateEvent(list) {
 }
 
 /**
@@ -122,13 +124,6 @@ function updateEvent(list) {
  * @param len 추가할 개수
  */
 function addRivalCard(len) {
-    for (let i = 0; i < len; i++) {
-        const newCard = createCard(false);
-        rivalCardList.push(newCard);
-        const cardEvent = uiUpdate(rival_deck, newCard, true);
-        cardEvent.addEventListener("click", evt => {
-        });
-    }
 }
 
 /**
@@ -136,11 +131,6 @@ function addRivalCard(len) {
  * @param name 영웅 이름
  */
 function addMyHero(name) {
-    // 카드 생성시 hero 는 true 로 주고 이름값도 같이 넘겨줌
-    const newCard = createCard(true, name);
-    const heroCard = uiUpdate(my_hero, newCard, false);
-    heroCard.addEventListener("click", evt => {
-    });
 }
 
 /**
@@ -148,9 +138,6 @@ function addMyHero(name) {
  * @param name 상대 영웅 이름
  */
 function addRivalHero(name) {
-    const newCard = createCard(true, name);
-    console.log(newCard.hero);
-    uiUpdate(rival_hero, newCard, false);
 }
 
 function Card(hero, name, rival) {
@@ -181,21 +168,6 @@ function createCard(hero, name) {
  * @param num 추가시킬 카드 장수
  */
 function drawCard(tag, num) {
-    for (let i = 0; i < num; i++) {
-        const newCard = createCard(false, null);
-        const eventList = [];
-        if (tag === my_deck) {
-            const myCardEvent = uiUpdate(tag, newCard, false);
-            myCardList.push(newCard);
-            eventList.push(myCardEvent);
-
-        } else {
-
-        }
-        updateEvent(eventList);
-
-    }
-
 }
 
 /**
@@ -210,14 +182,6 @@ function init() {
 }
 
 init();
-console.log(turn)
 turn_button.addEventListener("click", () => {
-    turn = !turn
-    if (turn) {
-        addMyCard(1);
-    } else {
-        drawCard(rival_deck, 1);
-    }
 
-
-})
+});
